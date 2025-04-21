@@ -21,6 +21,8 @@ RUN git clone https://github.com/SillyTavern/SillyTavern.git --branch ${SILLY_BR
 # Ensure the start script is executable
 RUN chmod +x start.sh
 
+COPY default-config.yaml config.yaml
+
 # Expose the default port SillyTavern runs on
 EXPOSE 8000
 
