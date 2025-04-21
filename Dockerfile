@@ -1,31 +1,72 @@
-# Use an official Node.js runtime as a parent image (Choose a recent LTS version)
-# Alpine Linux is used for a smaller image size
-FROM node:lts-alpine
+# Use a specific LTS Node.js and Alpine version for reproducibility
+# Check Docker Hub for the latest supported Alpine version for node:lts if desired
+FROM node:lts-alpine3.20
+
+# --- Configuration Arguments ---
+
+# Define the application home directory
+ARG APP_HOME=/home/node/app
+
+# Define the default SillyTavern branch to clone
+ARG SILLY_BRANCH=release
+
+# --- Environment Variables ---
+
+# Set Node.js environment to production for potential optimizations
+ENV NODE_ENV=production
+
+# --- System Setup ---
+
+# Install necessary system dependencies:
+# git: needed to clone the repository
+# bash: needed to run start.sh
+# tini: a lightweight init system for proper signal handling & zombie reaping
+RUN apk update && apk add --no-cache \
+    git \
+    bash \
+    tini
 
 # Set the working directory inside the container
-WORKDIR /app
+# Use the user provided by the base node image ('node')
+WORKDIR ${APP_HOME}
 
-# Install git, which is needed to clone the repository
-# Combine update and install in one layer to reduce image size
-RUN apk update && apk add --no-cache git bash
-
-# Argument to specify the branch (defaulting to 'release')
-ARG SILLY_BRANCH=release
-ENV SILLY_BRANCH=${SILLY_BRANCH}
+# --- Application Code ---
 
 # Clone the specified branch of the SillyTavern repository into the working directory
 # Use --single-branch and --depth 1 for a faster, smaller clone
-RUN git clone https://github.com/SillyTavern/SillyTavern.git --branch ${SILLY_BRANCH} --single-branch --depth 1 .
+RUN echo "*** Cloning SillyTavern branch: ${SILLY_BRANCH} ***" && \
+    git clone https://github.com/SillyTavern/SillyTavern.git --branch ${SILLY_BRANCH} --single-branch --depth 1 . && \
+    # Configure Git safe directory immediately after cloning for the WORKDIR
+    # This might be needed if start.sh runs git commands later
+    git config --global --add safe.directory ${APP_HOME}
 
-# The start.sh script might install further dependencies (like Python packages if needed)
-# Ensure the start script is executable
+# --- Custom Configuration ---
+
+# Copy your custom default configuration from the build context.
+# This will overwrite any 'config.yaml' cloned from the repo, applying your overlay.
+# Assumes SillyTavern reads 'config.yaml' from its root directory.
+# Uses --chown to ensure the config file is owned by the 'node' user.
+COPY --chown=node:node default-config.yaml config.yaml
+
+# --- Permissions and Execution Setup ---
+
+# Ensure the start script cloned from the repo is executable
 RUN chmod +x start.sh
 
-COPY default-config.yaml config.yaml
+# Change ownership of the entire application directory to the 'node' user
+# This allows start.sh (and node/npm processes it runs) to write files if needed
+# Do this *after* all file operations as root are complete
+RUN chown -R node:node ${APP_HOME}
+
+# Switch to the non-root 'node' user provided by the base image
+USER node
+
+# --- Container Runtime ---
 
 # Expose the default port SillyTavern runs on
 EXPOSE 8000
 
-# Command to run when the container starts
-# Uses bash explicitly as requested in the manual steps
-CMD ["bash", "start.sh"]
+# Set the entrypoint to use 'tini' as the init process (PID 1)
+# Tini will launch and manage the 'bash start.sh' command
+# This ensures proper signal handling (e.g., for graceful shutdown)
+ENTRYPOINT ["/sbin/tini", "--", "bash", "start.sh"]
