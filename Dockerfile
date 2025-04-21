@@ -47,6 +47,7 @@ RUN echo "*** Cloning SillyTavern branch: ${SILLY_BRANCH} ***" && \
 # Assumes SillyTavern reads 'config.yaml' from its root directory.
 # Uses --chown to ensure the config file is owned by the 'node' user.
 COPY --chown=node:node default-config.yaml ${APP_HOME}/default/config.yaml
+COPY --chown=node:node default-config.yaml ${APP_HOME}/config.yaml
 
 # --- Permissions and Execution Setup ---
 
