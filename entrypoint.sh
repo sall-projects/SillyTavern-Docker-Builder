@@ -6,7 +6,7 @@ if [ ! -e "config/config.yaml" ]; then
 fi
 
 # Inject User Password in config.yml
-sed -i -E "s/password:.*/password:${ST_PASSWORD}/" config/config.yaml
+sed -i -E "s/password:.*/password: \"${ST_PASSWORD}\"/" config/config.yaml
 
 # Execute postinstall to auto-populate config.yaml with missing values
 npm run postinstall
