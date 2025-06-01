@@ -67,6 +67,8 @@ USER node
 # Expose the default port SillyTavern runs on
 EXPOSE 8000
 
+COPY --chown=node:node ./entrypoint.sh ${APP_HOME}/entrypoint.sh
+
 # Set the entrypoint to use 'tini' as the init process (PID 1)
 # Tini will launch and manage the 'bash start.sh' command
 # This ensures proper signal handling (e.g., for graceful shutdown)
