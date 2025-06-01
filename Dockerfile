@@ -1,4 +1,4 @@
-FROM sillytavern:latest
+FROM ghcr.io/sillytavern/sillytavern:release
 
 # Copy your custom entrypoint script into the container
 COPY docker-entrypoint.sh /home/node/app/docker-entrypoint.sh
