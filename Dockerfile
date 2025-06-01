@@ -54,6 +54,9 @@ COPY --chown=node:node default-config.yaml ${APP_HOME}/config.yaml
 # Ensure the start script cloned from the repo is executable
 RUN chmod +x start.sh
 
+COPY --chown=node:node ./entrypoint.sh ${APP_HOME}/entrypoint.sh
+RUN chmod +x ${APP_HOME}/entrypoint.sh
+
 # Change ownership of the entire application directory to the 'node' user
 # This allows start.sh (and node/npm processes it runs) to write files if needed
 # Do this *after* all file operations as root are complete
@@ -67,7 +70,6 @@ USER node
 # Expose the default port SillyTavern runs on
 EXPOSE 8000
 
-COPY --chown=node:node ./entrypoint.sh ${APP_HOME}/entrypoint.sh
 
 # Set the entrypoint to use 'tini' as the init process (PID 1)
 # Tini will launch and manage the 'bash start.sh' command
