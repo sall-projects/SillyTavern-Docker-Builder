@@ -55,7 +55,7 @@ COPY --chown=node:node default-config.yaml ${APP_HOME}/config.yaml
 RUN chmod +x start.sh
 
 COPY --chown=node:node ./entrypoint.sh ${APP_HOME}/entrypoint.sh
-RUN chmod +x ${APP_HOME}/entrypoint.sh
+RUN chmod 777 ${APP_HOME}/entrypoint.sh
 
 # Change ownership of the entire application directory to the 'node' user
 # This allows start.sh (and node/npm processes it runs) to write files if needed
