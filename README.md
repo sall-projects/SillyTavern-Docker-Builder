@@ -50,6 +50,9 @@ The `docker-entrypoint.sh` script modifies `/home/node/app/config/config.yaml` u
     * Example: `-e ST_BASIC_AUTH_USERNAME="admin"`
 * **`ST_WHITELIST_MODE`**: Toggles `whitelistMode` (`true` or `false`).
     * Example: `-e ST_WHITELIST_MODE="false"`
+* **`ST_BASIC_AUTH_MODE`**: Directly controls the `basicAuthMode` setting in `config.yaml`. Set this to `true` to enable basic authentication or `false` to disable it.
+    * Example to enable: `-e ST_BASIC_AUTH_MODE="true"`
+    * Example to disable: `-e ST_BASIC_AUTH_MODE="false"`
 
 Refer to your `docker-entrypoint.sh` script for the full list of supported variables and their exact behavior. Boolean values should typically be `true` or `false` (lowercase strings).
 
