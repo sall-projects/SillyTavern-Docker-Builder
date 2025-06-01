@@ -29,6 +29,10 @@ docker run -d \
   -e ST_PORT="8000" \
   -e ST_LISTEN="true" \
   -e ST_PASSWORD="YourSecurePassword123" \
+  -e ST_BASIC_AUTH_USERNAME="admin" \
+  -e ST_BASIC_AUTH_MODE="true" \
+  -e ST_WHITELIST_MODE="false" \
+  --restart unless-stopped \
   --name sillytavern-app \
   my-sillytavern
 ```
