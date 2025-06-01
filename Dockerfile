@@ -62,9 +62,6 @@ RUN chmod 777 ${APP_HOME}/entrypoint.sh
 # Do this *after* all file operations as root are complete
 RUN chown -R node:node ${APP_HOME}
 
-# Switch to the non-root 'node' user provided by the base image
-USER node
-
 # --- Container Runtime ---
 
 # Expose the default port SillyTavern runs on
