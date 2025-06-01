@@ -57,6 +57,34 @@ RUN chmod +x start.sh
 COPY --chown=node:node ./entrypoint.sh ${APP_HOME}/entrypoint.sh
 RUN chmod 777 ${APP_HOME}/entrypoint.sh
 
+RUN \
+  echo "*** Install npm packages ***" && \
+  npm i --no-audit --no-fund --loglevel=error --no-progress --omit=dev && npm cache clean --force
+
+# Copy default chats, characters and user avatars to <folder>.default folder
+RUN \
+  rm -f "config.yaml" || true && \
+  ln -s "./config/config.yaml" "config.yaml" || true && \
+  mkdir "config" || true
+
+# Pre-compile public libraries
+RUN \
+  echo "*** Run Webpack ***" && \
+  node "./docker/build-lib.js"
+
+# Cleanup unnecessary files
+RUN \
+  echo "*** Cleanup ***" && \
+  mv "./docker/docker-entrypoint.sh" "./" && \
+  rm -rf "./docker" && \
+  echo "*** Make docker-entrypoint.sh executable ***" && \
+  chmod +x "./docker-entrypoint.sh" && \
+  echo "*** Convert line endings to Unix format ***" && \
+  dos2unix "./docker-entrypoint.sh"
+
+# Fix extension repos permissions
+RUN git config --global --add safe.directory "*"
+
 # Change ownership of the entire application directory to the 'node' user
 # This allows start.sh (and node/npm processes it runs) to write files if needed
 # Do this *after* all file operations as root are complete
