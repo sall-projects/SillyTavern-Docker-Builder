@@ -85,6 +85,13 @@ if [ -n "$ST_WHITELIST_MODE" ]; then
     inject_value "whitelistMode" "$ST_WHITELIST_MODE"
 fi
 
+# Example: Control Basic Authentication Mode directly (Boolean)
+if [ -n "$ST_BASIC_AUTH_MODE" ]; then
+    # Ensure ST_BASIC_AUTH_MODE is set to 'true' or 'false' (lowercase)
+    echo "Injecting ST_BASIC_AUTH_MODE as $ST_BASIC_AUTH_MODE..."
+    inject_value "basicAuthMode" "$ST_BASIC_AUTH_MODE"
+fi
+
 # Example: Basic Auth Username (String)
 if [ -n "$ST_BASIC_AUTH_USERNAME" ]; then
     # This targets 'username:' under 'basicAuthUser:'.
