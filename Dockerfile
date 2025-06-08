@@ -1,4 +1,4 @@
-FROM ghcr.io/sillytavern/sillytavern@sha256:013118f22a04181467a33e3ad58ef17643df2d5920e05c4416d5dd258c48f10c
+FROM ghcr.io/sillytavern/sillytavern@sha256:a1a5e38aa03a331d8c46d98b0501e25fe7c07820de27de6396f5894bd9405c73
 
 # Copy your custom entrypoint script into the container
 COPY docker-entrypoint.sh /home/node/app/docker-entrypoint.sh
